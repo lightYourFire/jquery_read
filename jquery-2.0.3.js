@@ -18,7 +18,7 @@
 // you try to trace through "use strict" call chains. (#13335)
 // Support: Firefox 18+
 //"use strict";
-    var
+    var //21-94 定义一些函数与变量
     // A central reference to the root jQuery(document)
         rootjQuery,
 
@@ -93,7 +93,7 @@
             jQuery.ready();
         };
 
-    jQuery.fn = jQuery.prototype = {
+    jQuery.fn = jQuery.prototype = { //96-283 对jQuery对象，添加一些方法与属性
         // The current version of jQuery being used
         jquery: core_version,
 
@@ -282,7 +282,7 @@
 // Give the init function the jQuery prototype for later instantiation
     jQuery.fn.init.prototype = jQuery.fn;
 
-    jQuery.extend = jQuery.fn.extend = function() {
+    jQuery.extend = jQuery.fn.extend = function() { //285-347 jQuery的继承方法
         var options, name, src, copy, copyIsArray, clone,
             target = arguments[0] || {},
             i = 1,
@@ -346,7 +346,7 @@
         return target;
     };
 
-    jQuery.extend({
+    jQuery.extend({ //349-817 扩展一些工具方法
         // Unique for each copy of jQuery on the page
         expando: "jQuery" + ( core_version + Math.random() ).replace( /\D/g, "" ),
 
@@ -874,7 +874,7 @@
      *
      * Date: 2013-06-03
      */
-    (function( window, undefined ) {
+    (function( window, undefined ) { // 877-2856 Sizzle复杂选择器
 
         var i,
             support,
@@ -2877,7 +2877,7 @@
      *	stopOnFalse:	interrupt callings when a callback returns false
      *
      */
-    jQuery.Callbacks = function( options ) {
+    jQuery.Callbacks = function( options ) { //2880-3042 回调对象，函数的统一管理
 
         // Convert options from String-formatted to Object-formatted if needed
         // (we check in cache first)
@@ -3040,7 +3040,7 @@
 
         return self;
     };
-    jQuery.extend({
+    jQuery.extend({ //3043-3183 Defered 延迟对象，对异步的统一管理「这个从来没有使用」
 
         Deferred: function( func ) {
             var tuples = [
@@ -3181,7 +3181,7 @@
             return deferred.promise();
         }
     });
-    jQuery.support = (function( support ) {
+    jQuery.support = (function( support ) { //3184-3295 功能检测模块
         var input = document.createElement("input"),
             fragment = document.createDocumentFragment(),
             div = document.createElement("div"),
@@ -3305,7 +3305,7 @@
      5. Avoid exposing implementation details on user objects (eg. expando properties)
      6. Provide a clear path for implementation upgrade to WeakMap in 2014
      */
-    var data_user, data_priv,
+    var data_user, data_priv, //3308-3652 数据缓存模块
         rbrace = /(?:\{[\s\S]*\}|\[[\s\S]*\])$/,
         rmultiDash = /([A-Z])/g;
 
@@ -3650,7 +3650,7 @@
         }
         return data;
     }
-    jQuery.extend({
+    jQuery.extend({ //3653-3797 队列管理方法
         queue: function( elem, type, data ) {
             var queue;
 
@@ -3800,7 +3800,7 @@
         rreturn = /\r/g,
         rfocusable = /^(?:input|select|textarea|button)$/i;
 
-    jQuery.fn.extend({
+    jQuery.fn.extend({ //3803-4299 对元素属性的操作
         attr: function( name, value ) {
             return jQuery.access( this, jQuery.attr, name, value, arguments.length > 1 );
         },
@@ -4297,7 +4297,7 @@
             };
         }
     });
-    var rkeyEvent = /^key/,
+    var rkeyEvent = /^key/, //4300-5128 事件操作相关方法
         rmouseEvent = /^(?:mouse|contextmenu)|click/,
         rfocusMorph = /^(?:focusinfocus|focusoutblur)$/,
         rtypenamespace = /^([^.]*)(?:\.(.+)|)$/;
@@ -5137,7 +5137,7 @@
             prev: true
         };
 
-    jQuery.fn.extend({
+    jQuery.fn.extend({ //5140-6057 DOM操作方法
         find: function( selector ) {
             var i,
                 ret = [],
@@ -6055,7 +6055,7 @@
             }).end();
         }
     });
-    var curCSS, iframe,
+    var curCSS, iframe, // 6058-6620 样式操作
     // swappable if display is none or starts with table except "table", "table-cell", or "table-caption"
     // see here for display values: https://developer.mozilla.org/en-US/docs/CSS/display
         rdisplayswap = /^(none|table(?!-c[ea]).+)/,
@@ -6618,7 +6618,7 @@
             jQuery.cssHooks[ prefix + suffix ].set = setPositiveNumber;
         }
     });
-    var r20 = /%20/g,
+    var r20 = /%20/g, // 6621-7854 提交的数据与ajax功能
         rbracket = /\[\]$/,
         rCRLF = /\r?\n/g,
         rsubmitterTypes = /^(?:submit|button|image|reset|file)$/i,
@@ -7852,7 +7852,7 @@
             };
         }
     });
-    var fxNow, timerId,
+    var fxNow, timerId, //7855-8584 amimate 运动方法
         rfxtypes = /^(?:toggle|show|hide)$/,
         rfxnum = new RegExp( "^(?:([+-])=|)(" + core_pnum + ")([a-z%]*)$", "i" ),
         rrun = /queueHooks$/,
@@ -8582,7 +8582,7 @@
             }).length;
         };
     }
-    jQuery.fn.offset = function( options ) {
+    jQuery.fn.offset = function( options ) { //8585-8792 位置与尺寸的方法
         if ( arguments.length ) {
             return options === undefined ?
                 this :
@@ -8801,7 +8801,7 @@
     jQuery.fn.andSelf = jQuery.fn.addBack;
 
 // })();
-    if ( typeof module === "object" && module && typeof module.exports === "object" ) {
+    if ( typeof module === "object" && module && typeof module.exports === "object" ) { //8804-8821 jQ支持模块化的代码
         // Expose jQuery as module.exports in loaders that implement the Node
         // module pattern (including browserify). Do not create the global, since
         // the user will be storing it themselves locally, and globals are frowned
@@ -8821,9 +8821,10 @@
     }
 
 // If there is a window object, that at least has a document property,
-// define jQuery and $ identifiers
+// define jQuery and $ identifiers 对外提供接口
     if ( typeof window === "object" && typeof window.document === "object" ) {
         window.jQuery = window.$ = jQuery;
     }
 
-})( window );
+})( window ); //自调用匿名函数
+
