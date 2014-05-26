@@ -12,13 +12,14 @@
  * Date: 2013-07-03T13:30Z
  */
 (function( window, undefined ) {
+    //传入udefined主要作用是防止undefined被修改，在某些IE版本，undefined可以被赋值为一个变量
 
 // Can't do this because several apps including ASP.NET trace
 // the stack via arguments.caller.callee and Firefox dies if
 // you try to trace through "use strict" call chains. (#13335)
 // Support: Firefox 18+
-//"use strict";
-    var //21-94 定义一些函数与变量
+//"use strict"; //开启严格模式
+    var //21-94 定义一些函数与初始化变量
     // A central reference to the root jQuery(document)
         rootjQuery,
 
@@ -34,7 +35,7 @@
         document = window.document,
         docElem = document.documentElement,
 
-    // Map over jQuery in case of overwrite
+    // Map over jQuery in case of overwrite 及冲突
         _jQuery = window.jQuery,
 
     // Map over the $ in case of overwrite
@@ -44,7 +45,7 @@
         class2type = {},
 
     // List of deleted data cache ids, so we can reuse them
-        core_deletedIds = [],
+        core_deletedIds = [],//2.0 版本开始基本没什么使用
 
         core_version = "2.0.3",
 
@@ -77,7 +78,7 @@
     // Match a standalone tag
         rsingleTag = /^<(\w+)\s*\/?>(?:<\/\1>|)$/,
 
-    // Matches dashed string for camelizing
+    // Matches dashed string for camelizing //驼峰表示法替换
         rmsPrefix = /^-ms-/,
         rdashAlpha = /-([\da-z])/gi,
 
@@ -8827,4 +8828,4 @@
     }
 
 })( window ); //自调用匿名函数
-
+//传入window参数，节省js向上查找变量的时间，压缩过程的时候可以替换变量window -> e
