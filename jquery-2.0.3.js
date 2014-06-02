@@ -75,7 +75,7 @@
     // Strict HTML recognition (#11290: must start with <)
         rquickExpr = /^(?:\s*(<[\w\W]+>)[^>]*|#([\w-]*))$/,
 
-    // Match a standalone tag
+    // Match a standalone tag 单标签
         rsingleTag = /^<(\w+)\s*\/?>(?:<\/\1>|)$/,
 
     // Matches dashed string for camelizing //驼峰表示法替换
@@ -111,20 +111,32 @@
             if ( typeof selector === "string" ) {
                 if ( selector.charAt(0) === "<" && selector.charAt( selector.length - 1 ) === ">" && selector.length >= 3 ) {
                     // Assume that strings that start and end with <> are HTML and skip the regex check
+                    //匹配新建模式 $('<div>'), $('<div><ul></ul></div>')
+                    //1. $('<div>')                 --> [null, '<div', null]
+                    //2. $('<div><ul></ul></div>')  --> [null, '<div><ul></ul></div>', null]
                     match = [ null, selector, null ];
 
                 } else {
+                    //3. 匹配查找元素的模式比如：$('#some_id'), $('.some_class'), $('#some_id div.box'), $('<div>Hello'), $('div'), 最后一个比较特殊
+                    //4. $('#some_id')         --> ['#some_id', undefined, 'some_id']
+                    //5. $('.some_class')      --> null
+                    //6. $('#some_id div.box') --> null
+                    //7. $('<div>Hello')       --> ['<div>Hello', 'div', undefined]
+                    //8. $('div')              --> null
                     match = rquickExpr.exec( selector );
                 }
 
                 // Match html or make sure no context is specified for #id
                 if ( match && (match[1] || !context) ) {
-
+                    //上述1, 2, 7的时候， 创建标签的时候执行
                     // HANDLE: $(html) -> $(array)
                     if ( match[1] ) {
+                        //$('<div>Hello</div>', $('#iframe_target')) 此时context就是一个jQuery对象，必需使用DOM节点
                         context = context instanceof jQuery ? context[0] : context;
 
                         // scripts is true for back-compat
+                        //$('<div><ul></ul></div><div>Hello</div>') --> 最后被合并到jQuery对象当中去, 如下所示
+                        //[div, div, jquery: "2.0.3", constructor: function, init: function, selector: "", toArray: function…]
                         jQuery.merge( this, jQuery.parseHTML(
                             match[1],
                             context && context.nodeType ? context.ownerDocument || context : document,
@@ -133,8 +145,12 @@
 
                         // HANDLE: $(html, props)
                         if ( rsingleTag.test( match[1] ) && jQuery.isPlainObject( context ) ) {
+                            //单标签且属性为对象时执行
+                            //创建标签的时候可以带一个json对象的属性列表, 像这样：$('<div></div>', {title: 'Google', html: 'Xrong'})
+                            //此时context就是上面的属性列表，而不是选择对象时的上下文
                             for ( match in context ) {
                                 // Properties of context are called as methods if possible
+                                //此时的this对象是所创建的HTML标签所对应的jQuery对象
                                 if ( jQuery.isFunction( this[ match ] ) ) {
                                     this[ match ]( context[ match ] );
 
@@ -166,6 +182,7 @@
 
                     // HANDLE: $(expr, $(...))
                 } else if ( !context || context.jquery ) {
+                    //上述3的时候，创建标签的时候执行
                     return ( context || rootjQuery ).find( selector );
 
                     // HANDLE: $(expr, context)
