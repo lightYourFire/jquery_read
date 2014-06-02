@@ -98,11 +98,11 @@
         // The current version of jQuery being used
         jquery: core_version,
 
-        constructor: jQuery,
+        constructor: jQuery, //修正constructor指向，97行jQuery.prototype = {} 默认会将jQuery.prototype 改成 Object
         init: function( selector, context, rootjQuery ) {
             var match, elem;
 
-            // HANDLE: $(""), $(null), $(undefined), $(false)
+            // HANDLE: $(""), $(null), $(undefined), $(false) //异常选中时，指回false
             if ( !selector ) {
                 return this;
             }
