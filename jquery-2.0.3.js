@@ -52,7 +52,7 @@
     // Save a reference to some core methods
         core_concat = core_deletedIds.concat,
         core_push = core_deletedIds.push,
-        core_slice = core_deletedIds.slice,
+        core_slice = core_deletedIds.slice, //这将slice方法改成另外一个名字，难道是为了压缩代码的时候用?提高压缩率?
         core_indexOf = core_deletedIds.indexOf,
         core_toString = class2type.toString,
         core_hasOwn = class2type.hasOwnProperty,
@@ -96,10 +96,10 @@
 
     jQuery.fn = jQuery.prototype = { //96-283 对jQuery对象，添加一些方法与属性
         // The current version of jQuery being used
-        jquery: core_version,
+        jquery: core_version, //设置jQuery版本信息
 
         constructor: jQuery, //修正constructor指向，97行jQuery.prototype = {} 默认会将jQuery.prototype 改成 Object
-        init: function( selector, context, rootjQuery ) {
+        init: function( selector, context, rootjQuery ) { //rootjQuery 就是$(document)
             var match, elem;
 
             // HANDLE: $(""), $(null), $(undefined), $(false) //异常选中时，指回false
@@ -128,7 +128,7 @@
 
                 // Match html or make sure no context is specified for #id
                 if ( match && (match[1] || !context) ) {
-                    //上述1, 2, 7的时候， 创建标签的时候执行
+                    //上述1, 2, 7的时候， 创建标签与获取某个ID的元素的时候执行
                     // HANDLE: $(html) -> $(array)
                     if ( match[1] ) {
                         //$('<div>Hello</div>', $('#iframe_target')) 此时context就是一个jQuery对象，必需使用DOM节点
@@ -170,6 +170,7 @@
                         // Check parentNode to catch when Blackberry 4.6 returns
                         // nodes that are no longer in the document #6963
                         if ( elem && elem.parentNode ) {
+                            //多判断了一次是否含有父元素，解决上面提到的Blackberry Bug
                             // Inject the element directly into the jQuery object
                             this.length = 1;
                             this[0] = elem;
@@ -182,16 +183,21 @@
 
                     // HANDLE: $(expr, $(...))
                 } else if ( !context || context.jquery ) {
+                    //解析类似这样的jQuery选择器: $('li', $(document))
+                    //此时context是一个jQuery对象，可以输出jquery这个属性的内容即jQuery版本信息
                     //上述3的时候，创建标签的时候执行
-                    return ( context || rootjQuery ).find( selector );
+                    return ( context || rootjQuery ).find( selector ); //find方法是通过sezzle库来解析的
 
                     // HANDLE: $(expr, context)
                     // (which is just equivalent to: $(context).find(expr)
                 } else {
+                    //this.constructor 就是jQuery 见101行的注释
+                    //解析类似这样的jQuery选择器: $('li', document)
                     return this.constructor( context ).find( selector );
                 }
 
                 // HANDLE: $(DOMElement)
+                //解析类似 $(document) 的语句
             } else if ( selector.nodeType ) {
                 this.context = this[0] = selector;
                 this.length = 1;
@@ -200,14 +206,17 @@
                 // HANDLE: $(function)
                 // Shortcut for document ready
             } else if ( jQuery.isFunction( selector ) ) {
+                //正面就是解析 $(function() {}), $(document).ready(function() {}) 前者为后者的简写
                 return rootjQuery.ready( selector );
             }
 
             if ( selector.selector !== undefined ) {
+                //这里解析 $($('#some_id')) 这样的语句, 这种写法有点傻气
                 this.selector = selector.selector;
                 this.context = selector.context;
             }
 
+            //makeArray 转换成数组, 事实上是转换成json格式, 与merge类似
             return jQuery.makeArray( selector, this );
         },
 
@@ -218,6 +227,11 @@
         length: 0,
 
         toArray: function() {
+            //变成原生数组
+            //在文档中发现了正面一句话
+            //Binding can be done with the .call function of Function.prototype
+            //and it can also be reduced using [].slice.call(arguments) instead
+            // of Array.prototype.slice.call.
             return core_slice.call( this );
         },
 
@@ -227,21 +241,23 @@
             return num == null ?
 
                 // Return a 'clean' array
+                //转换成原生数组
                 this.toArray() :
 
                 // Return just the object
+                //转换成原生对象
                 ( num < 0 ? this[ this.length + num ] : this[ num ] );
         },
 
         // Take an array of elements and push it onto the stack
         // (returning the new matched element set)
-        pushStack: function( elems ) {
+        pushStack: function( elems ) { //jQuery对象入栈处理, 此方法在jQuery内部非常重要
 
             // Build a new jQuery matched element set
             var ret = jQuery.merge( this.constructor(), elems );
 
             // Add the old object onto the stack (as a reference)
-            ret.prevObject = this;
+            ret.prevObject = this; //供end方法使用，回溯使用
             ret.context = this.context;
 
             // Return the newly-formed element set
@@ -251,12 +267,14 @@
         // Execute a callback for every element in the matched set.
         // (You can seed the arguments with an array of args, but this is
         // only used internally.)
+        //each 是实例方法
         each: function( callback, args ) {
+            //jQuery.each 是jQuery的工具方法，就是最jQuery的底层实现
             return jQuery.each( this, callback, args );
         },
 
         ready: function( fn ) {
-            // Add the callback
+            // Add the callback todo 暂时放着
             jQuery.ready.promise().done( fn );
 
             return this;
@@ -275,6 +293,7 @@
         },
 
         eq: function( i ) {
+            //导找集合中某个特定项的元素
             var len = this.length,
                 j = +i + ( i < 0 ? len : 0 );
             return this.pushStack( j >= 0 && j < len ? [ this[j] ] : [] );
@@ -290,7 +309,7 @@
             return this.prevObject || this.constructor(null);
         },
 
-        // For internal use only.
+        // For internal use only. 内部使用
         // Behaves like an Array's method, not like a jQuery method.
         push: core_push,
         sort: [].sort,
