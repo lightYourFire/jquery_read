@@ -35,10 +35,12 @@
         document = window.document,
         docElem = document.documentElement,
 
-    // Map over jQuery in case of overwrite 及冲突
+    // Map over jQuery in case of overwrite 防止冲突
+        //同下
         _jQuery = window.jQuery,
 
     // Map over the $ in case of overwrite
+        //有些页面上的$符号已经被占用，那么将这个$变量暂时存放起来
         _$ = window.$,
 
     // [[Class]] -> type pairs
@@ -275,6 +277,7 @@
 
         ready: function( fn ) {
             // Add the callback todo 暂时放着
+            //延迟对象
             jQuery.ready.promise().done( fn );
 
             return this;
@@ -324,7 +327,7 @@
             target = arguments[0] || {},
             i = 1,
             length = arguments.length,
-            deep = false;
+            deep = false; //默认为浅拷贝
 
         // Handle a deep copy situation
         if ( typeof target === "boolean" ) {
@@ -340,6 +343,7 @@
         }
 
         // extend jQuery itself if only one argument is passed
+        //一个参数的时候主要用来给jQuery扩展插件用, 也就是$.extend({a: function(){}, b: function(){}});这一类型
         if ( length === i ) {
             target = this;
             --i;
@@ -355,11 +359,13 @@
 
                     // Prevent never-ending loop
                     if ( target === copy ) {
+                        //防止循环引用 $.extend(a, {name: a});
                         continue;
                     }
 
                     // Recurse if we're merging plain objects or arrays
                     if ( deep && copy && ( jQuery.isPlainObject(copy) || (copyIsArray = jQuery.isArray(copy)) ) ) {
+                        //深拷贝
                         if ( copyIsArray ) {
                             copyIsArray = false;
                             clone = src && jQuery.isArray(src) ? src : [];
@@ -368,11 +374,12 @@
                             clone = src && jQuery.isPlainObject(src) ? src : {};
                         }
 
-                        // Never move original objects, clone them
+                        // Never move original objects, clone them 经典的递归调用
                         target[ name ] = jQuery.extend( deep, clone, copy );
 
                         // Don't bring in undefined values
                     } else if ( copy !== undefined ) {
+                        //浅拷贝
                         target[ name ] = copy;
                     }
                 }
@@ -383,9 +390,9 @@
         return target;
     };
 
-    jQuery.extend({ //349-817 扩展一些工具方法
-        // Unique for each copy of jQuery on the page
-        expando: "jQuery" + ( core_version + Math.random() ).replace( /\D/g, "" ),
+    jQuery.extend({ //349-817 扩展一些工具方法, 使用上面定义的extend方法来扩展jQuery工具方法
+        // Unique for each copy of jQuery on the page 生成唯一jQuery字符串
+        expando: "jQuery" + ( core_version + Math.random() ).replace( /\D/g, "" ), //(jQuery内部使用)
 
         noConflict: function( deep ) {
             if ( window.$ === jQuery ) {
@@ -415,7 +422,7 @@
             }
         },
 
-        // Handle when the DOM is ready
+        // Handle when the DOM is ready DOM加载最终会调用这个jQuery工具方法
         ready: function( wait ) {
 
             // Abort if there are pending holds or we're already ready
